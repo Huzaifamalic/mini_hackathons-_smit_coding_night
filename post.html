@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Social Posting App</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- AOS Animation -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    .post-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+      transition: all 0.4s ease;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
+
+  <div class="max-w-2xl mx-auto p-6 pt-10">
+
+    <!-- Header -->
+    <div class="text-center mb-10" data-aos="fade-down">
+      <h1 class="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-3">
+        Social Posting App
+      </h1>
+      <p class="text-lg text-gray-600">Share your thoughts • Connect with friends</p>
+    </div>
+
+    <!-- User Info + Logout -->
+    <div class="flex justify-between items-center mb-8 bg-white rounded-2xl shadow-lg p-5" data-aos="fade-right">
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-md">
+          <span id="userInitial">A</span>
+        </div>
+        <div>
+          <h3 class="font-bold text-xl" id="displayName">Guest User</h3>
+          <p class="text-sm text-gray-500" id="userEmail">guest@example.com</p>
+        </div>
+      </div>
+      <button id="btnout" class="px-6 py-3 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 transition flex items-center gap-2 shadow-lg">
+        <i data-lucide="log-out"></i> Logout
+      </button>
+    </div>
+
+    <!-- Post Form -->
+    <div class="bg-white rounded-3xl shadow-xl p-8 mb-8 border border-gray-100" data-aos="fade-up">
+      <textarea 
+        id="userPost" 
+        rows="4" 
+        class="w-full p-6 border-2 border-gray-200 rounded-2xl focus:border-purple-500 focus:outline-none resize-none transition text-gray-800 placeholder-gray-400 text-lg font-medium"
+        placeholder="What's on your mind today?"
+        required></textarea>
+
+      <div class="flex justify-between items-center mt-6">
+        <select id="visibility" class="px-6 py-3 bg-gradient-to-r from-gray-100 to-gray-200 rounded-xl text-gray-700 font-semibold">
+          <option value="public">Public</option>
+          <option value="friends">Friends Only</option>
+          <option value="private" selected>Private</option>
+        </select>
+
+        <button onclick="addPost()" class="px-10 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-xl hover:from-purple-700 hover:to-pink-700 transition transform hover:scale-105 active:scale-95 shadow-xl flex items-center gap-3 text-lg">
+          <i data-lucide="send"></i> Post Now
+        </button>
+      </div>
+    </div>
+
+    <!-- Filter, Sort & AI Search Bar -->
+    <div class="bg-white rounded-2xl shadow-lg p-6 mb-8 flex flex-wrap gap-4 justify-between items-center border border-gray-100" data-aos="fade-up">
+      <div class="flex flex-wrap gap-3">
+        <select id="filterVisibility" class="px-5 py-3 bg-gray-100 rounded-xl text-gray-700 font-medium border border-gray-300">
+          <option value="all">All Posts</option>
+          <option value="public">Public</option>
+          <option value="friends">Friends Only</option>
+          <option value="private">Private</option>
+          <option value="mine">My Posts Only</option>
+        </select>
+
+        <select id="sortPosts" class="px-5 py-3 bg-gray-100 rounded-xl text-gray-700 font-medium border border-gray-300">
+          <option value="latest">Latest First</option>
+          <option value="oldest">Oldest First</option>
+          <option value="mostLiked">Most Liked</option>
+        </select>
+      </div>
+
+      <!-- AI Smart Search -->
+      <div class="relative">
+        <input 
+          type="text" 
+          id="aiSearch" 
+          placeholder="AI Search: 'happy posts', 'love', 'by Ali', 'today'..." 
+          class="w-full pl-14 pr-6 py-4 border-2 border-purple-200 rounded-xl focus:border-purple-600 focus:outline-none transition text-gray-800 font-medium"
+        />
+        <i data-lucide="sparkles" class="absolute left-5 top-4.5 text-purple-600 w-6 h-6"></i>
+      </div>
+    </div>
+
+    <!-- Posts Container -->
+    <div id="postsContainer" class="space-y-8">
+      <!-- Posts will appear here -->
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="posts.js"></script>
+  <script>
+    AOS.init({ duration: 800, once: true });
+    lucide.createIcons();
+  </script>
+</body>
+</html>

@@ -1,88 +1,48 @@
-// auth.js (Updated – Login ke baad redirect)
-
-const loginTab = document.getElementById('loginTab');
-const signupTab = document.getElementById('signupTab');
-const loginFormEl = document.getElementById('loginForm');
-const signupFormEl = document.getElementById('signupForm');
-
-// Tab Switching
-function switchTab(target) {
-  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-  if (target === 'login') {
-    loginTab.classList.add('active');
-    loginFormEl.classList.remove('hidden');
-    signupFormEl.classList.add('hidden');
+// auth.js - 100% Working
+function togglePass(id, btn) {
+  const input = document.getElementById(id);
+  const icon = btn.querySelector('i');
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.setAttribute('data-lucide', 'eye-off');
   } else {
-    signupTab.classList.add('active');
-    signupFormEl.classList.remove('hidden');
-    loginFormEl.classList.add('hidden');
+    input.type = 'password';
+    icon.setAttribute('data-lucide', 'eye');
   }
+  lucide.createIcons();
 }
 
-loginTab.addEventListener('click', () => switchTab('login'));
-signupTab.addEventListener('click', () => switchTab('signup'));
+document.getElementById('loginTab').onclick = () => { document.getElementById('loginForm').classList.remove('hidden'); document.getElementById('signupForm').classList.add('hidden'); }
+document.getElementById('signupTab').onclick = () => { document.getElementById('signupForm').classList.remove('hidden'); document.getElementById('loginForm').classList.add('hidden'); }
 
-// Validation Regex
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+// Users
+let users = JSON.parse(localStorage.getItem('users') || '[]');
 
-// Sign Up Handler
-document.getElementById('signup-form').addEventListener('submit', function(e) {
+document.getElementById('signup-form').onsubmit = e => {
   e.preventDefault();
-
   const name = document.getElementById('signupName').value.trim();
-  const email = document.getElementById('signupEmail').value.trim();
-  const password = document.getElementById('signupPassword').value;
+  const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+  const pass = document.getElementById('signupPassword').value;
 
-  if (!name) return Swal.fire({icon: 'error', title: 'Oops...', text: 'Name is required!'});
-  if (!emailRegex.test(email)) return Swal.fire({icon: 'error', title: 'Invalid Email', text: 'Please enter a valid email address'});
-  if (!passwordRegex.test(password)) {
-    return Swal.fire({
-      icon: 'error',
-      title: 'Weak Password',
-      text: 'Password must be 8+ chars with uppercase, lowercase, number & special character'
-    });
-  }
+  if (users.some(u => u.email === email)) return Swal.fire('Error', 'Email already exists!', 'error');
+  if (pass.length < 8) return Swal.fire('Error', 'Password must be 8+ characters!', 'error');
 
-  localStorage.setItem('user', JSON.stringify({ name, email, password }));
+  users.push({ name, email, password: pass });
+  localStorage.setItem('users', JSON.stringify(users));
+  localStorage.setItem('currentUser', JSON.stringify({ name, email }));
+  Swal.fire('Success!', 'Account created!', 'success').then(() => location.href = 'dashboard.html');
+};
 
-  Swal.fire({
-    icon: 'success',
-    title: 'Account Created!',
-    text: `Welcome ${name}! Your account has been created.`,
-    timer: 2000,
-    showConfirmButton: false
-  }).then(() => {
-    switchTab('login');
-    this.reset();
-  });
-});
-
-// Login Handler - SUCCESS KE BAAD REDIRECT
-document.getElementById('login-form').addEventListener('submit', function(e) {
+document.getElementById('login-form').onsubmit = e => {
   e.preventDefault();
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const pass = document.getElementById('loginPassword').value;
+  const user = users.find(u => u.email === email && u.password === pass);
 
-  const email = document.getElementById('loginEmail').value.trim();
-  const password = document.getElementById('loginPassword').value;
-
-  const user = JSON.parse(localStorage.getItem('user') || 'null');
-
-  if (user && user.email === email && user.password === password) {
-    Swal.fire({
-      icon: 'success',
-      title: 'Login Successful!',
-      text: `Welcome back, ${user.name}! Redirecting...`,
-      timer: 2000,
-      showConfirmButton: false
-    }).then(() => {
-      // Ye line add ki hai – login ke baad redirect
-      window.location.href = "index.html"; 
-    });
+  if (user) {
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    location.href = 'post.html';
   } else {
-    Swal.fire({
-      icon: 'error',
-      title: 'Login Failed',
-      text: 'Wrong email or password!'
-    });
+    Swal.fire('Error', 'Wrong email or password!', 'error');
   }
-});
+};
