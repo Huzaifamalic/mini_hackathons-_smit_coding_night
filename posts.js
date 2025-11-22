@@ -221,7 +221,7 @@ document.getElementById('btnout').addEventListener('click', () => {
     if (result.isConfirmed) {
       localStorage.removeItem('currentUser');
       // Seedha redirect – koi code nahi chalega iske baad
-      window.location.replace('auth.html');
+      window.location.replace('index.html');
     }
   });
 });
